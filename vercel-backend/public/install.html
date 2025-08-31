@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install TwinMind Audio Transcription Extension</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo {
+            width: 128px;
+            height: 128px;
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .code {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/icons/icon128.png" alt="TwinMind Logo" class="logo">
+        <h1>TwinMind Audio Transcription Extension</h1>
+        <p>Advanced Chrome extension for real-time audio transcription</p>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Important:</strong> This extension requires the Vercel backend to be deployed and configured with your OpenAI API key.
+    </div>
+
+    <h2>Installation Steps</h2>
+
+    <div class="step">
+        <span class="step-number">1</span>
+        <strong>Deploy Backend First</strong>
+        <p>Make sure you've deployed the Vercel backend and set your OpenAI API key in the environment variables.</p>
+    </div>
+
+    <div class="step">
+        <span class="step-number">2</span>
+        <strong>Update Extension URL</strong>
+        <p>In the extension's <code>background.js</code>, update the <code>baseUrl</code> to your Vercel backend URL:</p>
+        <div class="code">this.baseUrl = 'https://your-app.vercel.app/api';</div>
+    </div>
+
+    <div class="step">
+        <span class="step-number">3</span>
+        <strong>Download Extension Files</strong>
+        <p>Download all the extension files from this Vercel deployment:</p>
+        <ul>
+            <li><a href="/manifest.json" download>manifest.json</a></li>
+            <li><a href="/background.js" download>background.js</a></li>
+            <li><a href="/sidepanel.html" download>sidepanel.html</a></li>
+            <li><a href="/sidepanel.js" download>sidepanel.js</a></li>
+            <li><a href="/sidepanel.css" download>sidepanel.css</a></li>
+            <li><a href="/offscreen.html" download>offscreen.html</a></li>
+            <li><a href="/offscreen.js" download>offscreen.js</a></li>
+            <li><a href="/icons/icon16.png" download>icon16.png</a></li>
+            <li><a href="/icons/icon32.png" download>icon32.png</a></li>
+            <li><a href="/icons/icon48.png" download>icon48.png</a></li>
+            <li><a href="/icons/icon128.png" download>icon128.png</a></li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <span class="step-number">4</span>
+        <strong>Load Extension in Chrome</strong>
+        <p>Open Chrome and go to <code>chrome://extensions/</code></p>
+        <p>Enable "Developer mode" in the top right</p>
+        <p>Click "Load unpacked" and select the folder with your extension files</p>
+    </div>
+
+    <div class="success">
+        <strong>✅ Success!</strong> Your extension should now be installed and working with the Vercel backend.
+    </div>
+
+    <h2>Testing</h2>
+    <p>To test if everything is working:</p>
+    <ol>
+        <li>Open the extension sidepanel</li>
+        <li>Navigate to a YouTube video or any audio source</li>
+        <li>Click "Refresh Audio Detection"</li>
+        <li>Try starting a recording session</li>
+    </ol>
+
+    <h2>Support</h2>
+    <p>If you encounter issues:</p>
+    <ul>
+        <li>Check the browser console for error messages</li>
+        <li>Verify your Vercel backend is running</li>
+        <li>Ensure your OpenAI API key is set in Vercel</li>
+        <li>Check the extension's connection status</li>
+    </ul>
+</body>
+</html>
