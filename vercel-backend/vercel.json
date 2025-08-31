@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "functions": {
+    "api/transcribe.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "OPENAI_API_KEY": "@openai-api-key"
+  }
+}
