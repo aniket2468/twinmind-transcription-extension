@@ -3,183 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real-Time Audio Transcription</title>
+  <title>Audio Transcription</title>
   <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
-  <!-- Skip Link for Accessibility -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  
-  <!-- Header -->
-  <header class="header">
-    <div class="logo">
-      <span class="logo-icon">🧠</span>
-      <span class="logo-text">twin mind</span>
-    </div>
-    <h1 class="title">Real-Time Audio Transcription</h1>
-    <div class="header-actions">
-      <button class="icon-button" id="notifications" 
-              aria-label="Notifications, press Enter or Space to view"
-              tabindex="0">
-        <span aria-hidden="true">🔔</span>
-      </button>
-      <button class="icon-button" id="closePanel" 
-              aria-label="Close panel, press Enter or Space to close"
-              tabindex="0">
-        <span aria-hidden="true">✕</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- Status and Controls Section -->
-  <section class="control-section" id="main-content">
-    <div class="status-row">
-      <div class="connection-status" id="connectionStatus" 
-           role="status" aria-live="polite" aria-label="Connection status">
-        <div class="connection-dot online" id="connectionDot" aria-hidden="true"></div>
-        <span class="connection-text online" id="connectionText">Online</span>
-        <span class="queued-requests" id="queuedRequests" style="display: none;" aria-label="Pending requests">0 pending</span>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Audio Transcription</h1>
+      <div class="status-indicator" id="statusIndicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
       </div>
-      
-      <div class="session-info">
-        <div class="session-duration" role="timer" aria-live="polite" aria-label="Current session duration">
-          <span class="timer-icon" aria-hidden="true">⏱️</span>
-          <span class="timer-label">Session Duration:</span>
-          <span class="session-timer" id="sessionTimer" aria-label="Session timer">00:00:00</span>
+    </header>
+
+    <!-- API Key Configuration -->
+    <div class="api-config" id="apiConfig">
+      <div class="config-header">
+        <h3>API Configuration</h3>
+        <button class="btn btn-small" id="toggleConfig">
+          <span class="btn-icon">⚙️</span>
+          Configure
+        </button>
+      </div>
+      <div class="config-content" id="configContent" style="display: none;">
+        <div class="config-item">
+          <label for="geminiKey">Google Gemini API Key (Optional)</label>
+          <input type="password" id="geminiKey" placeholder="Enter your Gemini API key for better accuracy">
+          <button class="btn btn-small" id="saveKey">Save</button>
+        </div>
+        <div class="config-hint">
+          <small>Get your free API key from <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a></small>
         </div>
       </div>
     </div>
 
-    <div class="control-buttons">
-      <button class="control-button primary" id="startRecording"
-              aria-label="Start auto recording, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">🎤</span>
-        <span class="button-text">Start Auto Recording</span>
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-primary" id="startBtn">
+        <span class="btn-icon">🎤</span>
+        Start Recording
       </button>
+      <button class="btn btn-secondary" id="pauseBtn" disabled>
+        <span class="btn-icon">⏸️</span>
+        Pause
+      </button>
+      <button class="btn btn-secondary" id="resumeBtn" disabled>
+        <span class="btn-icon">▶️</span>
+        Resume
+      </button>
+      <button class="btn btn-danger" id="stopBtn" disabled>
+        <span class="btn-icon">⏹️</span>
+        Stop Recording
+      </button>
+    </div>
+
+    <!-- Session Info -->
+    <div class="session-info" id="sessionInfo" style="display: none;">
+      <div class="timer" id="timer">00:00:00</div>
+      <div class="tab-info" id="tabInfo">
+        <span class="tab-icon">🖥️</span>
+        <span id="tabTitle">Current Tab</span>
+      </div>
+    </div>
+
+    <!-- Transcription Display -->
+    <div class="transcription-container">
+      <div class="transcription-header">
+        <h3>Transcription</h3>
+        <div class="transcription-controls">
+          <button class="btn btn-small" id="copyBtn" disabled>
+            <span class="btn-icon">📋</span>
+            Copy
+          </button>
+          <button class="btn btn-small" id="downloadBtn" disabled>
+            <span class="btn-icon">💾</span>
+            Download TXT
+          </button>
+          <button class="btn btn-small" id="downloadJsonBtn" disabled>
+            <span class="btn-icon">📄</span>
+            Download JSON
+          </button>
+          <button class="btn btn-small btn-danger" id="clearBtn" disabled>
+            <span class="btn-icon">🗑️</span>
+            Clear
+          </button>
+        </div>
+      </div>
       
-      <button class="control-button secondary" id="stopRecording" disabled
-              aria-label="Stop recording, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">⏹️</span>
-        <span class="button-text">Stop Recording</span>
-      </button>
-    </div>
-
-    <div class="recording-status" id="recordingStatus" 
-         role="status" aria-live="polite" aria-label="Recording status">
-      <span aria-hidden="true">🎙️</span> Ready to Record
-    </div>
-    
-    <div class="audio-detection-controls">
-      <button class="detection-button" id="refreshAudioDetection" 
-              aria-label="Refresh audio detection, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">🔄</span>
-        <span class="button-text">Refresh Audio Detection</span>
-      </button>
-    </div>
-  </section>
-
-  <!-- Audio Sources Section -->
-  <section class="audio-sources-section">
-    <div class="audio-sources" id="audioSources">
-      <div class="audio-source inactive" id="tabAudioSource" 
-           role="status" aria-live="polite" aria-label="Tab audio source status">
-        <span class="source-icon" aria-hidden="true">🖥️</span>
-        <span class="source-text">Tab Audio: No audio detected</span>
-      </div>
-      
-      <div class="audio-source inactive" id="micAudioSource"
-           role="status" aria-live="polite" aria-label="Microphone source status">
-        <span class="source-icon" aria-hidden="true">🎤</span>
-        <span class="source-text">Microphone: Inactive</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Live Transcription Section -->
-  <section class="transcription-section">
-    <div class="section-header">
-      <div class="section-title">
-        <span class="title-icon" aria-hidden="true">✏️</span>
-        <span class="title-text">Live Transcription</span>
-      </div>
-      <div class="section-stats">
-        <span class="segment-count" id="segmentCount" aria-label="Number of transcription segments">0 segments</span>
-      </div>
-    </div>
-
-    <div class="transcription-container" id="transcriptionContainer">
-      <div class="transcription-list" id="transcriptionList" 
-           role="log" aria-live="polite" aria-label="Live transcription updates">
-        <div class="transcription-placeholder">
-          <div class="placeholder-icon" aria-hidden="true">🎵</div>
-          <div class="placeholder-text">Ready to Transcribe</div>
-          <div class="placeholder-hint">Click "Start Auto Recording" to begin capturing audio from your current tab</div>
+      <div class="transcription-content" id="transcriptionContent">
+        <div class="placeholder" id="placeholder">
+          <div class="placeholder-icon">🎵</div>
+          <div class="placeholder-text">Ready to transcribe audio</div>
+          <div class="placeholder-hint">Click "Start Recording" to begin capturing audio from your current tab</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Settings Section -->
-  <section class="settings-section">
-    <div class="section-header">
-      <div class="section-title">
-        <span class="title-icon" aria-hidden="true">⚙️</span>
-        <span class="title-text">Transcription Settings</span>
+    <!-- Error Display -->
+    <div class="error-container" id="errorContainer" style="display: none;">
+      <div class="error-content">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text" id="errorText"></span>
+        <button class="error-close" id="errorClose">×</button>
       </div>
     </div>
-    
-    <div class="settings-content">
-      <div class="setting-item">
-        <label for="transcriptionMethod" class="setting-label">Transcription Method:</label>
-        <select id="transcriptionMethod" class="setting-select" 
-                aria-label="Choose transcription method">
-          <option value="whisper">OpenAI Whisper (Recommended)</option>
-          <option value="prompt">Multi-modal LLM with Prompt</option>
-        </select>
-      </div>
-      
-      <div class="setting-item" id="promptSetting" style="display: none;">
-        <label for="customPrompt" class="setting-label">Custom Prompt:</label>
-        <textarea id="customPrompt" class="setting-textarea" 
-                  placeholder="Enter your custom transcription prompt..."
-                  aria-label="Custom transcription prompt"></textarea>
-      </div>
-    </div>
-  </section>
+  </div>
 
-  <!-- Export Controls Section -->
-  <section class="export-section">
-    <div class="export-buttons">
-      <button class="export-button" id="copyText" disabled
-              aria-label="Copy transcript to clipboard, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">📋</span>
-        <span class="button-text">Copy Text</span>
-      </button>
-      
-      <button class="export-button" id="downloadText" disabled
-              aria-label="Download transcript, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">📁</span>
-        <span class="button-text">Download</span>
-      </button>
-      
-      <button class="export-button" id="clearText" disabled
-              aria-label="Clear transcript, press Enter or Space to activate"
-              tabindex="0">
-        <span class="button-icon" aria-hidden="true">🗑️</span>
-        <span class="button-text">Clear</span>
-      </button>
-    </div>
-  </section>
-
-  <!-- Error Container -->
-  <div class="error-container" id="errorContainer" style="display: none;"></div>
-
-  <!-- Scripts -->
   <script src="sidepanel.js"></script>
 </body>
 </html>

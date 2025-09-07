@@ -1,201 +1,167 @@
-# Real-Time Audio Transcription
+# Real-Time Audio Transcription Chrome Extension
 
-A professional Chrome extension for real-time audio transcription with advanced features, offline buffering, and multi-source audio capture support.
+A clean, reliable Chrome extension that captures audio from browser tabs and provides real-time transcription using Google Gemini 2.5 Flash API.
 
-## 🎯 Features
+## Features
 
 ### ✅ Core Features
-- **Real-time Audio Transcription**: Captures and transcribes audio from browser tabs and microphone
-- **Advanced Audio Processing**: 30-second chunks with 3-second overlap for seamless transcription
-- **Multi-Source Support**: Tab audio, microphone, and display media capture
-- **Professional Sidepanel UI**: Clean, modern interface with real-time status updates
-- **Offline Buffering**: Continues recording during network interruptions
-- **Session Management**: Meeting timer and comprehensive session tracking
+- **Tab Audio Capture**: Captures audio from active browser tabs (YouTube, Google Meet, etc.)
+- **Real-time Transcription**: Updates transcript every 30 seconds
+- **Clean UI**: Simple, intuitive sidepanel interface
+- **Export Options**: Copy to clipboard or download as text file
+- **Session Timer**: Shows current recording duration
+- **Error Handling**: Comprehensive error handling with user-friendly messages
 
 ### ✅ Advanced Features
-- **3-Second Overlap Processing**: Prevents word loss between audio chunks
-- **Channel Labeling**: Clear indication of audio source (tab vs microphone)
-- **Offline Queue Management**: Automatic retry with exponential backoff
-- **Performance Optimized**: Minimal CPU usage with efficient audio processing
-- **Error Recovery**: Comprehensive error handling and automatic reconnection
+- **30-Second Chunks**: Processes audio in 30-second segments
+- **3-Second Overlap**: Ensures no words are lost between chunks
+- **Google Gemini Integration**: Uses Gemini 2.5 Flash for high-quality transcription
+- **Web Speech API Fallback**: Falls back to browser speech recognition if Gemini fails
+- **Microphone Fallback**: Falls back to microphone if tab audio fails
+- **Offline Buffering**: Handles connection issues gracefully
 
-## 🚀 Quick Start
+## Installation
 
-### 1. Get OpenAI API Key
-1. Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-2. Sign in or create an account
-3. Click "Create new secret key"
-4. Copy your API key (starts with `sk-`)
+1. **Download the Extension**
+   - Download the extension files
+   - Extract to a folder
 
-### 2. Configure API Key
-1. Open `background.js` in the extension folder
-2. Find this line:
-   ```javascript
-   openaiApiKey: 'YOUR_OPENAI_API_KEY_HERE'
-   ```
-3. Replace with your actual API key:
-   ```javascript
-   openaiApiKey: 'sk-your-actual-api-key-here'
-   ```
+2. **Load in Chrome**
+   - Open Chrome and go to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked" and select the extension folder
 
-### 3. Install Extension
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode" (top right toggle)
-3. Click "Load unpacked"
-4. Select the extension folder
-5. The extension icon will appear in your toolbar
+3. **Configure API Key (Optional)**
+   - The extension works with Web Speech API by default
+   - For better accuracy, configure Google Gemini API key:
+     - Get API key from [Google AI Studio](https://aistudio.google.com/)
+     - The extension will prompt for the key on first use
 
-### 4. Grant Permissions
-1. Click the extension icon
-2. Click "Open Transcription Panel"
-3. Grant required permissions when prompted
+## Usage
 
-## 🎵 How to Use
+1. **Start Recording**
+   - Click the extension icon to open the sidepanel
+   - Click "Start Recording" to begin capturing tab audio
+   - The extension will automatically detect and capture audio from the current tab
 
-### Basic Usage
-1. **Open Sidepanel**: Click extension icon → "Open Transcription Panel"
-2. **Start Recording**: Click "Start Auto Recording" button
-3. **View Live Transcription**: Real-time text appears with timestamps
-4. **Stop Recording**: Click "Stop Recording" when finished
-5. **Export Results**: Copy to clipboard or download in various formats
+2. **View Transcription**
+   - Transcribed text appears in real-time
+   - Each chunk shows timestamp and transcription source
+   - Auto-scrolls to show latest content
 
-### Audio Sources
-- **Tab Audio**: Automatically detects audio from active browser tabs
-- **Microphone**: Direct microphone input as fallback
-- **Display Media**: Screen sharing audio capture
+3. **Export Results**
+   - Use "Copy" to copy transcript to clipboard
+   - Use "Download" to save as text file
+   - Use "Clear" to start fresh
 
-### Recording Controls
-- **Start Auto Recording**: Begin audio capture and transcription
-- **Stop Recording**: End recording session
-- **Session Timer**: Real-time display of recording duration
-- **Status Indicators**: Online/offline status and connection health
+4. **Stop Recording**
+   - Click "Stop Recording" to end the session
+   - All transcriptions are preserved until cleared
 
-## 🔧 Technical Architecture
+## Technical Details
 
-### Core Components
-- **Background Service Worker** (`background.js`): Manages state, API calls, and coordination
-- **Offscreen Document** (`offscreen.js`): Handles advanced audio capture and processing
-- **Sidepanel UI** (`sidepanel.html/js/css`): User interface and controls
-- **Manifest V3**: Modern Chrome extension standard
+### Architecture
+- **Manifest V3**: Modern Chrome extension architecture
+- **Service Worker**: Background processing
+- **Offscreen Document**: Audio capture and processing
+- **Sidepanel**: User interface
 
-### Audio Processing Pipeline
-- **Chunk Duration**: 30 seconds (configurable)
-- **Overlap**: 3 seconds between chunks
-- **Sample Rate**: 16kHz (optimized for speech recognition)
-- **Format**: WebM audio for optimal Whisper API compatibility
+### Audio Processing
+- **Format**: WebM with Opus codec
+- **Quality**: 48kHz, stereo, 128kbps
+- **Chunking**: 30-second chunks with 3-second overlap
+- **Fallback**: Microphone capture if tab audio fails
 
-### OpenAI Whisper Integration
-- **Model**: whisper-1 (latest OpenAI model)
-- **Response Format**: Verbose JSON with confidence scores
-- **Language**: Auto-detection (English optimized)
-- **Error Handling**: Comprehensive retry logic and fallbacks
+### Transcription Services
+1. **Google Gemini 2.5 Flash** (Primary)
+   - High accuracy transcription
+   - Multi-modal LLM with audio support
+   - Free tier available
 
-### Communication System
-- **Port-based Communication**: Stable connection between sidepanel and background
-- **Message Routing**: Efficient message handling with acknowledgments
-- **Heartbeat System**: Connection keep-alive mechanism
-- **Automatic Reconnection**: Handles connection failures gracefully
+2. **Web Speech API** (Fallback)
+   - Browser-native speech recognition
+   - Works offline
+   - Good for basic transcription
 
-## 📁 Project Structure
+3. **Basic Analysis** (Final Fallback)
+   - Shows audio metadata
+   - Ensures something is always displayed
+
+## File Structure
 
 ```
-TwinMind Assignment/
-├── manifest.json              # Extension configuration and permissions
-├── background.js              # Service worker with transcription service
-├── offscreen.html             # Offscreen document for audio processing
-├── offscreen.js               # Advanced audio capture and processing
-├── sidepanel.html             # Main UI layout
-├── sidepanel.js               # UI logic and background communication
-├── sidepanel.css              # Professional styling and animations
-├── README.md                  # This documentation
-└── icons/                     # Extension icons
-    ├── icon16.png
-    ├── icon32.png
-    ├── icon48.png
-    └── icon128.png
+extension/
+├── manifest.json          # Extension configuration
+├── background.js          # Service worker
+├── sidepanel.html         # Main UI
+├── sidepanel.js           # UI logic
+├── sidepanel.css          # Styling
+├── offscreen.html         # Audio capture document
+├── offscreen.js           # Audio processing
+└── README.md              # This file
 ```
 
-## 🔍 Troubleshooting
+## Permissions
+
+- `tabs`: Access to tab information
+- `tabCapture`: Capture tab audio
+- `activeTab`: Access current tab
+- `sidePanel`: Sidepanel interface
+- `offscreen`: Audio processing
+- `storage`: Save settings and API keys
+
+## Browser Compatibility
+
+- **Chrome 88+**: Required for getDisplayMedia API
+- **Modern Browsers**: Web Speech API support
+- **Mobile**: Limited (sidepanel not supported on mobile)
+
+## Troubleshooting
 
 ### Common Issues
 
-#### "Tab Audio: No audio detected"
-- **Solution**: Ensure the tab is actually playing audio (YouTube video, etc.)
-- **Note**: Chrome's `audible` property is unreliable, extension will attempt capture anyway
+1. **"No audio stream available"**
+   - Ensure the tab is playing audio
+   - Try refreshing the page
+   - Check if audio is muted
 
-#### "Failed to start recording"
-- **Check**: Console for detailed error messages
-- **Verify**: OpenAI API key is configured correctly
-- **Ensure**: Tab has audio content playing
+2. **"Web Speech API not supported"**
+   - Update Chrome to latest version
+   - Check if microphone permissions are granted
 
-#### "Message port closed" errors
-- **Status**: Fixed in latest version with heartbeat system
-- **If persists**: Reload extension completely
+3. **"Gemini API error"**
+   - Check API key configuration
+   - Verify internet connection
+   - Check API quota limits
 
-#### Audio capture not working
-- **Check**: Console for diagnostic information
-- **Verify**: Permissions are granted
-- **Ensure**: Using Chrome 114+ (required for Sidepanel API)
+### Debug Mode
 
-### Debugging
-- **Background Script**: `chrome://extensions/` → "Inspect views: service worker"
-- **Sidepanel**: Open sidepanel → Right-click → "Inspect"
-- **Offscreen Document**: Check console for detailed audio capture logs
+Open Chrome DevTools to see detailed logs:
+1. Right-click extension icon → "Inspect popup"
+2. Check Console tab for error messages
+3. Check Network tab for API calls
 
-## 🎯 Success Criteria Met
+## Development
 
-### ✅ MVP Requirements
-- ✅ Real-time audio transcription from browser tabs
-- ✅ 30-second chunked processing with overlap
-- ✅ Start/stop recording controls
-- ✅ Export functionality (copy/download)
-- ✅ Basic error handling
+### Setup
+1. Clone the repository
+2. Load extension in Chrome
+3. Make changes to source files
+4. Reload extension in Chrome
 
-### ✅ Advanced Features
-- ✅ 3-second overlap processing
-- ✅ Channel labeling (tab vs microphone)
-- ✅ Offline buffering and queue management
-- ✅ Meeting timer and session tracking
-- ✅ Professional UI/UX design
-- ✅ Comprehensive error handling with retry logic
+### Testing
+1. Test with different audio sources
+2. Test with poor network conditions
+3. Test error scenarios
+4. Verify all export functions
 
-## 💰 Pricing
+## License
 
-### OpenAI Whisper API
-- **Cost**: $0.006 per minute of audio
-- **Example**: 1 hour of transcription = $0.36
-- **Very affordable** for regular use
+This project is open source and available under the MIT License.
 
-## 🔧 Development
+## Support
 
-### Local Development
-1. Make changes to source files
-2. Go to `chrome://extensions/`
-3. Click "Reload" on the extension
-4. Test functionality
-
-### Testing Checklist
-1. Open a tab with audio (YouTube, etc.)
-2. Open sidepanel
-3. Start recording
-4. Verify transcription appears
-5. Test export functionality
-6. Check error handling
-
-## 📄 License
-
-MIT License - Feel free to modify and distribute.
-
-## 🎉 Ready for Production!
-
-The extension is now ready for use with your OpenAI API key. Perfect for:
-- Meeting transcriptions
-- Video content analysis
-- Accessibility support
-- Language learning
-- Content creation
-- Professional audio processing
-
----
-
-**Need help?** Check the troubleshooting section or check the console for detailed diagnostic information.
+For issues and questions:
+1. Check the troubleshooting section
+2. Review Chrome DevTools console
+3. Create an issue with detailed description
